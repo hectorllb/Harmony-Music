@@ -1,5 +1,5 @@
 name: harmonymusic
-description: A cross platform app for music streaming.
+description: A cross platform app for music streaming (neonMusic).
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -76,6 +76,7 @@ dependencies:
   toggle_switch: ^2.1.0
   tray_manager: ^0.2.3
   url_launcher: ^6.2.1
+  wakelock_plus: ^1.4.0
   widget_marquee: ^0.0.8
   window_manager: ^0.4.2
   youtube_explode_dart:
