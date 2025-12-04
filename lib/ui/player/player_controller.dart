@@ -664,6 +664,8 @@ class PlayerController extends GetxController
         isCurrentSongFav.isTrue) {
       Get.find<Downloader>().download(currMediaItem);
     }
+
+    _audioHandler.customAction('updateLikeStatus');
   }
 
   // ignore: prefer_typing_uninitialized_variables
