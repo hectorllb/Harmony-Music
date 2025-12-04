@@ -187,9 +187,12 @@ class ThemeController extends GetxController {
           primaryColorDark: Colors.black,
           primaryColorLight: Colors.grey[850],
           colorScheme: ColorScheme.fromSwatch(
-              accentColor: Colors.grey[700], brightness: Brightness.dark),
-          progressIndicatorTheme: ProgressIndicatorThemeData(
-              color: Colors.grey[700], linearTrackColor: Colors.white),
+              accentColor: const Color(0xFF00FFFF), // Neon Blue
+              backgroundColor: Colors.black,
+              brightness: Brightness.dark),
+          progressIndicatorTheme: const ProgressIndicatorThemeData(
+              color: Color(0xFF00FFFF), // Neon Blue
+              linearTrackColor: Colors.white24),
           textTheme: const TextTheme(
               titleLarge: TextStyle(
                 fontSize: 23,
@@ -209,11 +212,11 @@ class ThemeController extends GetxController {
           navigationRailTheme: const NavigationRailThemeData(
               backgroundColor: Colors.black,
               selectedIconTheme: IconThemeData(
-                color: Colors.white,
+                color: Color(0xFF00FFFF), // Neon Blue
               ),
               unselectedIconTheme: IconThemeData(color: Colors.white38),
               selectedLabelTextStyle: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF00FFFF), // Neon Blue
                   fontWeight: FontWeight.bold,
                   fontSize: 15),
               unselectedLabelTextStyle: TextStyle(
@@ -224,19 +227,19 @@ class ThemeController extends GetxController {
             //base bar color
             inactiveTrackColor: Colors.white30,
             //buffered progress
-            activeTrackColor: Colors.white,
+            activeTrackColor: Color(0xFF00FFFF), // Neon Blue
             //progress bar color
-            valueIndicatorColor: Colors.black38,
-            thumbColor: Colors.white,
+            valueIndicatorColor: Color(0xFFFF00FF), // Neon Pink
+            thumbColor: Color(0xFF00FFFF), // Neon Blue
           ),
-          textSelectionTheme: TextSelectionThemeData(
-              cursorColor: Colors.grey[700],
-              selectionColor: Colors.grey[700],
-              selectionHandleColor: Colors.grey[700]),
+          textSelectionTheme: const TextSelectionThemeData(
+              cursorColor: Color(0xFF00FFFF),
+              selectionColor: Color(0xFF00FFFF),
+              selectionHandleColor: Color(0xFF00FFFF)),
           inputDecorationTheme: const InputDecorationTheme(
-              focusColor: Colors.white,
+              focusColor: Color(0xFF00FFFF),
               focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white))));
+                  borderSide: BorderSide(color: Color(0xFF00FFFF)))));
       return baseTheme.copyWith(
           textTheme: GoogleFonts.interTextTheme(baseTheme.textTheme));
     } else {
