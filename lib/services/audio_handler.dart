@@ -35,7 +35,7 @@ Future<AudioHandler> initAudioService() async {
   return await AudioService.init(
     builder: () => MyAudioHandler(),
     config: AudioServiceConfig(
-      androidNotificationIcon: 'mipmap/ic_launcher_monochrome',
+      androidNotificationIcon: 'drawable/ic_notification',
       androidNotificationChannelId: 'com.mycompany.myapp.audio',
       androidNotificationChannelName: 'Harmony Music Notification',
       androidNotificationOngoing: true,
@@ -142,6 +142,7 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
       final currentSong =
           queue.value.isNotEmpty ? queue.value[currentIndex] : null;
       final isLiked = currentSong != null &&
+          Hive.isBoxOpen("LIBFAV") &&
           Hive.box("LIBFAV").containsKey(currentSong.id);
 
       playbackState.add(playbackState.value.copyWith(
