@@ -10,6 +10,7 @@ import 'albumart_lyrics.dart';
 import 'backgroud_image.dart';
 import 'lyrics_switch.dart';
 import 'player_control.dart';
+import '../../screens/CarMode/car_mode_screen.dart';
 
 /// Standard player widget
 ///
@@ -181,6 +182,16 @@ class StandardPlayer extends StatelessWidget {
                     size: 28,
                   ),
                   onPressed: playerController.playerPanelController.close,
+                ),
+
+                /// Car Mode button
+                IconButton(
+                  icon: const Icon(
+                    Icons.directions_car,
+                    size: 28,
+                  ),
+                  tooltip: "Car Mode",
+                  onPressed: () => Get.to(() => const CarModeScreen()),
                 ),
 
                 /// Playing from [Album name]
