@@ -34,17 +34,29 @@ import "package:media_kit/src/player/platform_player.dart" show MPVLogLevel;
 Future<AudioHandler> initAudioService() async {
   return await AudioService.init(
     builder: () => MyAudioHandler(),
-    config: const AudioServiceConfig(
+    config: AudioServiceConfig(
       androidNotificationIcon: 'mipmap/ic_launcher_monochrome',
       androidNotificationChannelId: 'com.mycompany.myapp.audio',
       androidNotificationChannelName: 'Harmony Music Notification',
       androidNotificationOngoing: true,
-      androidStopForegroundOnPause: true,
+      androidStopForegroundOnPause: false,
     ),
   );
 }
 
 class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
+  static final _like = MediaControl.custom(
+    androidIcon: 'drawable/ic_favorite',
+    label: 'Like',
+    name: 'like',
+  );
+
+  static final _unlike = MediaControl.custom(
+    androidIcon: 'drawable/ic_favorite_border',
+    label: 'Unlike',
+    name: 'unlike',
+  );
+
   // ignore: prefer_typing_uninitialized_variables
   late final _cacheDir;
   late AudioPlayer _player;
@@ -127,11 +139,17 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
   void _notifyAudioHandlerAboutPlaybackEvents() {
     _player.playbackEventStream.listen((PlaybackEvent event) {
       final playing = _player.playing;
+      final currentSong =
+          queue.value.isNotEmpty ? queue.value[currentIndex] : null;
+      final isLiked = currentSong != null &&
+          Hive.box("LIBFAV").containsKey(currentSong.id);
+
       playbackState.add(playbackState.value.copyWith(
         controls: [
           MediaControl.skipToPrevious,
           if (playing) MediaControl.pause else MediaControl.play,
           MediaControl.skipToNext,
+          if (isLiked) _like else _unlike,
         ],
         systemActions: const {
           MediaAction.seek,
@@ -684,9 +702,67 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
           currentShuffleIndex = 0;
         }
         break;
+
+      case 'like':
+        await _toggleFavorite();
+        break;
+
+      case 'unlike':
+        await _toggleFavorite();
+        break;
+
+      case 'updateLikeStatus':
+        // This action is called when the like status changes in the app to update the notification
+        final playing = _player.playing;
+        final currentSong =
+            queue.value.isNotEmpty ? queue.value[currentIndex] : null;
+        final isLiked = currentSong != null &&
+            Hive.box("LIBFAV").containsKey(currentSong.id);
+        playbackState.add(playbackState.value.copyWith(
+          controls: [
+            MediaControl.skipToPrevious,
+            if (playing) MediaControl.pause else MediaControl.play,
+            MediaControl.skipToNext,
+            if (isLiked) _like else _unlike,
+          ],
+        ));
+        break;
+
       default:
         break;
     }
+  }
+
+  Future<void> _toggleFavorite() async {
+    final currentSong =
+        queue.value.isNotEmpty ? queue.value[currentIndex] : null;
+    if (currentSong == null) return;
+
+    final box = await Hive.openBox("LIBFAV");
+    if (box.containsKey(currentSong.id)) {
+      await box.delete(currentSong.id);
+    } else {
+      await box.put(currentSong.id, MediaItemBuilder.toJson(currentSong));
+    }
+
+    // Update notification state
+    final playing = _player.playing;
+    final isLiked = box.containsKey(currentSong.id);
+    playbackState.add(playbackState.value.copyWith(
+      controls: [
+        MediaControl.skipToPrevious,
+        if (playing) MediaControl.pause else MediaControl.play,
+        MediaControl.skipToNext,
+        if (isLiked) _like else _unlike,
+      ],
+    ));
+
+    // Notify UI if alive
+    customEvent.add({
+      'eventType': 'favoriteToggled',
+      'songId': currentSong.id,
+      'isLiked': isLiked
+    });
   }
 
   void _shuffleCmd(int index) {
